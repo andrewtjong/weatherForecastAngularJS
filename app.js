@@ -1,7 +1,15 @@
 var weatherApp = angular.module('weatherApp', ['ngRoute', 'ngResource'])
 
-weatherApp.config(function ($routeProvider) {
+weatherApp.config(['$routeProvider', '$locationProvider', '$sceDelegateProvider', function ($routeProvider, $locationProvider, $sceDelegateProvider) {
     
+    $sceDelegateProvider.resourceUrlWhitelist([
+        'self',
+        // Allow loading from our assets domain. **.
+        'http://api.openweathermap.org/**'
+      ]);
+
+    $locationProvider.hashPrefix('');
+
     $routeProvider
 
     .when('/', {
@@ -13,7 +21,7 @@ weatherApp.config(function ($routeProvider) {
         templateUrl: 'pages/forecast.html',
         controller: 'forecastController'  
     })
-})
+}])
 
 weatherApp.service('cityService', function() {
 
@@ -31,9 +39,15 @@ weatherApp.controller('homeController', ['$scope', 'cityService', function($scop
 
 }]);
 
-weatherApp.controller('forecastController', ['$scope', 'cityService', function($scope, cityService) {
+weatherApp.controller('forecastController', ['$scope', '$resource', 'cityService', function($scope, $resource, cityService) {
 
     $scope.city = cityService.city;
 
+    $scope.weatherAPI= $resource("http://api.openweathermap.org/data/2.5/forecast?appid=bf80bdbfe08da086a652c60e3d9b12b5", {get: { method: "JSONP"}})
+
+        $scope.weatherResult = $scope.weatherAPI.get({ q: $scope.city, cnt: 2 });
+
+        console.log($scope.weatherResult)
 
 }]);
+
