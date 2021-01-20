@@ -2,7 +2,6 @@ weatherApp.config(['$routeProvider', '$locationProvider', '$sceDelegateProvider'
     
     $sceDelegateProvider.resourceUrlWhitelist([
         'self',
-        // Allow loading from our assets domain. **.
         'http://api.openweathermap.org/**'
       ]);
 
